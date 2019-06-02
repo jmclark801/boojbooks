@@ -6,44 +6,80 @@
           type="text"
           placeholder="Please enter a book to search for "
           v-model="book"
-          v-validate="'min:5'"
+          v-validate="'min:3'"
           name="search"
         >
-        <transition name="alert-in" enter-active-class="animated flipInX" leave-active-class="animated flipOutX">
+        <transition
+          name="alert-in"
+          enter-active-class="animated flipInX"
+          leave-active-class="animated flipOutX"
+        >
           <p class="alert" v-if="errors.has('search')">{{ errors.first('search') }}</p>
         </transition>
       </form>
       <ul>
-        <transition-group name="list" enter-active-class="animated bounceInUp" leave-active-class="animated bounceOutDown">
-        <li v-for="(data, index) in books" :key="index">{{ data.book }}
-          <i class="fa fa-minus-circle" v-on:click="remove(index)"></i>
-        </li> 
+        <li v-for="result in results">
+          <!-- This warning wants a key when it is not required per vue docs-->
+          <img v-bind:src="result.thumbnail">
+          <p>
+            {{ result.author }}
+            <br>
+            {{ result.title }}
+            <br>
+            {{ result.averageRating }}
+            <br>
+          </p>
+          <i class="fa fa-plus-circle" v-on:click="remove(index)"></i>
+        </li>
+      </ul>
+      <ul>
+        <transition-group
+          name="list"
+          enter-active-class="animated bounceInUp"
+          leave-active-class="animated bounceOutDown"
+        >
+          <li v-for="(data, index) in books" :key="index">
+            {{ data.book }}
+            <i class="fa fa-minus-circle" v-on:click="remove(index)"></i>
+          </li>
         </transition-group>
       </ul>
-      <p>Your Favorite Books!</p>
+      <!-- <p>Your Favorite Books!</p> -->
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   name: "Books",
   data() {
     return {
       book: "",
-      books: []
+      books: [],
+      results: []
     };
   },
   methods: {
     searchForBook(book) {
       this.$validator.validateAll().then(result => {
         if (result) {
-          //axios code goes here.
           console.log(`Seaching for ${book}`);
-          axios.get(`https://www.googleapis.com/books/v1/volumes?q=` + book).then( response => {
-            console.log(response.data);
-          });
+          axios
+            .get(`https://www.googleapis.com/books/v1/volumes?q=` + book)
+            .then(response => {
+              for (var i = 0; i < 3; i++) {
+                this.results.push({
+                  author: response.data.items[i].volumeInfo.authors[0],
+                  thumbnail:
+                    response.data.items[i].volumeInfo.imageLinks.smallThumbnail,
+                  title: response.data.items[i].volumeInfo.title,
+                  averageRating: response.data.items[i].volumeInfo.averageRating
+                });
+                console.log(`Author: ${this.results[i].author}`);
+              }
+              console.log(this.results);
+            });
 
           this.books.push({ book: this.book });
           this.book = "";
@@ -52,7 +88,7 @@ export default {
         }
       });
     },
-    remove(id){
+    remove(id) {
       this.books.splice(id, 1);
     }
   }
@@ -71,7 +107,6 @@ export default {
   margin-top: -20px;
 }
 
-
 .holder {
   background: #fff;
 }
@@ -79,6 +114,7 @@ export default {
 i {
   float: right;
 }
+
 input {
   width: calc(100% - 40px);
   border: 0;
@@ -112,5 +148,4 @@ p {
 .container {
   box-shadow: 0px 0px 40px lightgray;
 }
-
 </style>
