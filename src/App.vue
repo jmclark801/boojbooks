@@ -30,7 +30,7 @@ body {
   display: grid;
   grid-template-rows: auto;
   justify-items: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 body, html {
@@ -43,7 +43,7 @@ img {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 25px;
-  margin-top: 25px;
+  margin-top: 10%;
   width: 35%;
 }
 </style>

@@ -31,8 +31,8 @@
           <i class="fa fa-plus-circle icon--add-book" v-on:click="addFavorite(index)"></i>
         </li>
       </ul>
-      <div>
-        My Saved Favorites:
+      <div v-if="books.length > 0">
+        <p>My Saved Favorites:</p>
       </div>
       <ul>
         <transition-group
@@ -42,9 +42,14 @@
         >
           <li v-for="(book, index) in books" :key="index">
             <img v-bind:src="book.thumbnail">
-            Author: {{ book.author }}
-            Title: {{ book.title }}
-            Average Rating: {{ book.averageRating }}
+            <p>
+              Author: {{ book.author }}
+              <br>
+              Title: {{ book.title }}
+              <br>
+              Average Rating: {{ book.averageRating }}
+              <br>
+            </p>
             <i class="fa fa-minus-circle" v-on:click="remove(index)"></i>
           </li>
         </transition-group>
@@ -80,15 +85,8 @@ export default {
                   title: response.data.items[i].volumeInfo.title,
                   averageRating: response.data.items[i].volumeInfo.averageRating
                 });
-                console.log(`Author: ${this.results[i].author}`);
               }
-              console.log(this.results);
-              console.log(this.results[0].author);
             });
-
-          // this.books.push({ book: this.book });
-
-          console.log(this.books);
           this.book = "";
         } else {
           console.log("Not a valid search");
@@ -99,12 +97,8 @@ export default {
       this.books.splice(id, 1);
     },
     addFavorite(id) {
-      console.log(id);
-      console.log(this.results);
-      console.log(this.results[id]);
       this.books.push(this.results[id]);
-      console.log(this.books[id].author);
- ;
+      this.results = [];
     }
   }
 };
@@ -130,18 +124,11 @@ i {
   float: right;
 }
 
-/* 
-To do
-.icon--add-book {
-  vertical-align: middle;
-  margin-bottom: 50px;
-} */
-
-
-img { 
+img {
   float: left;
   width: 20%;
-  }
+  margin: 0px;
+}
 
 input {
   width: calc(100% - 40px);
