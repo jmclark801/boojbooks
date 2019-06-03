@@ -18,33 +18,37 @@
         </transition>
       </form>
       <ul>
-        <li v-for="result in results">
-          <!-- This warning wants a key when it is not required per vue docs-->
+        <li v-for="(result, index) in results" :key="index">
           <img v-bind:src="result.thumbnail">
           <p>
-            {{ result.author }}
+            Author: {{ result.author }}
             <br>
-            {{ result.title }}
+            Title: {{ result.title }}
             <br>
-            {{ result.averageRating }}
+            Average Rating: {{ result.averageRating }}
             <br>
           </p>
-          <i class="fa fa-plus-circle" v-on:click="remove(index)"></i>
+          <i class="fa fa-plus-circle icon--add-book" v-on:click="addFavorite(index)"></i>
         </li>
       </ul>
+      <div>
+        My Saved Favorites:
+      </div>
       <ul>
         <transition-group
           name="list"
           enter-active-class="animated bounceInUp"
           leave-active-class="animated bounceOutDown"
         >
-          <li v-for="(data, index) in books" :key="index">
-            {{ data.book }}
+          <li v-for="(book, index) in books" :key="index">
+            <img v-bind:src="book.thumbnail">
+            Author: {{ book.author }}
+            Title: {{ book.title }}
+            Average Rating: {{ book.averageRating }}
             <i class="fa fa-minus-circle" v-on:click="remove(index)"></i>
           </li>
         </transition-group>
       </ul>
-      <!-- <p>Your Favorite Books!</p> -->
     </div>
   </div>
 </template>
@@ -79,9 +83,12 @@ export default {
                 console.log(`Author: ${this.results[i].author}`);
               }
               console.log(this.results);
+              console.log(this.results[0].author);
             });
 
-          this.books.push({ book: this.book });
+          // this.books.push({ book: this.book });
+
+          console.log(this.books);
           this.book = "";
         } else {
           console.log("Not a valid search");
@@ -90,6 +97,14 @@ export default {
     },
     remove(id) {
       this.books.splice(id, 1);
+    },
+    addFavorite(id) {
+      console.log(id);
+      console.log(this.results);
+      console.log(this.results[id]);
+      this.books.push(this.results[id]);
+      console.log(this.books[id].author);
+ ;
     }
   }
 };
@@ -114,6 +129,19 @@ export default {
 i {
   float: right;
 }
+
+/* 
+To do
+.icon--add-book {
+  vertical-align: middle;
+  margin-bottom: 50px;
+} */
+
+
+img { 
+  float: left;
+  width: 20%;
+  }
 
 input {
   width: calc(100% - 40px);
